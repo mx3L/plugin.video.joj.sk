@@ -19,34 +19,31 @@
 # *  http://www.gnu.org/copyleft/gpl.html
 # *
 # */
-import os
 sys.path.append( os.path.join ( os.path.dirname(__file__),'resources','lib') )
+from Plugins.Extensions.archivCZSK.archivczsk import ArchivCZSK
 import joj
-import xbmcprovider,xbmcaddon,xbmcutil,xbmc
+import xbmcprovider, xbmcutil
 import util
 import traceback,urllib2
 
 __scriptid__   = 'plugin.video.joj.sk'
 __scriptname__ = 'joj.sk'
-__addon__      = xbmcaddon.Addon(id=__scriptid__)
+__addon__ = ArchivCZSK.get_xbmc_addon(__scriptid__)
 __language__   = __addon__.getLocalizedString
 
-settings = {'downloads':__addon__.getSetting('downloads'),'quality':__addon__.getSetting('quality')}
-params = util.params()
-if params=={}:
-    xbmcutil.init_usage_reporting(__scriptid__)
+settings = {'quality':__addon__.getSetting('quality')}
 provider = joj.JojContentProvider()
 
 class XBMCJojContentProvider(xbmcprovider.XBMCMultiResolverContentProvider):
     def render_default(self, item):
         if item['type'] == 'showoff':
-            item['title'] = item['title'] + ' [B](Nevys)[/B]'
+            item['title'] = item['title'] + '  (Nevys)'
         elif item['type'] == "showon7d":
-            item['title'] = item['title'] + ' [B][COLOR red](7d)[/COLOR][/B]'
+            item['title'] = item['title'] + ' (7d)'
         if item['type'] == 'topvideo' or item['type'] == 'newvideo':
             self.render_video(item)
         else:
             self.render_dir(item)
             
         
-XBMCJojContentProvider(provider,settings,__addon__).run(params)
+XBMCJojContentProvider(provider,settings,__addon__, session).run(params)
